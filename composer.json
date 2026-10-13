@@ -1,0 +1,56 @@
+{
+  "name": "petecoop/filament-toolbar-filters",
+  "description": "Lift selected Filament table filters into the toolbar.",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "filament",
+    "laravel",
+    "filters",
+    "tables"
+  ],
+  "authors": [
+    {
+      "name": "Pete Cooper",
+      "email": "pete@petecoop.co.uk"
+    }
+  ],
+  "require": {
+    "php": "^8.3",
+    "filament/filament": "^5.0",
+    "illuminate/support": "^12.0|^13.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^5.0",
+    "pestphp/pest-plugin-laravel": "^5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Petecoop\\FilamentToolbarFilters\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Petecoop\\FilamentToolbarFilters\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Petecoop\\FilamentToolbarFilters\\ToolbarFiltersServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    },
+    "sort-packages": true
+  },
+  "scripts": {
+    "test": "pest",
+    "lint": "mago lint",
+    "format": "mago fmt"
+  }
+}
