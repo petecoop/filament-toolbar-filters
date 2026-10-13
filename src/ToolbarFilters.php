@@ -19,27 +19,24 @@ class ToolbarFilters
 
         $names = array_values(array_unique($names));
 
-        foreach ($names as $name) {
-            if (! $table->getFilter($name, withHidden: true)) {
-                throw new InvalidArgumentException(
-                    "Unknown toolbar filter [{$name}]. Define filters before calling toolbarFilters().",
-                );
-            }
-        }
-
-        foreach ($names as $name) {
-            $table->getFilter($name)?->indicateUsing(static fn (): array => []);
-        }
-
         return $table
             ->deferFilters(false)
             ->filtersFormSchema(static function (array $filters) use ($table, $names): array {
+                // Resolve names after the full table configuration has been built.
+                foreach ($names as $name) {
+                    if (! $table->getFilter($name, withHidden: true)) {
+                        throw new InvalidArgumentException("Unknown toolbar filter [{$name}].");
+                    }
+                }
+
                 foreach ($names as $name) {
                     $filter = $table->getFilter($name);
 
                     if (! $filter) {
                         continue;
                     }
+
+                    $filter->indicateUsing(static fn (): array => []);
 
                     $filters[$name] = ToolbarFilterGroup::make($filter->getSchemaComponents())
                         ->statePath($name)

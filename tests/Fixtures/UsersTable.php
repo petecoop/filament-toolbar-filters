@@ -18,11 +18,17 @@ class UsersTable extends TableWidget
 
     public bool $useToolbar = true;
 
+    public bool $toolbarFirst = false;
+
     #[Url(as: 'filters')]
     public ?array $tableFilters = null;
 
     public function table(Table $table): Table
     {
+        if ($this->useToolbar && $this->toolbarFirst) {
+            $table->toolbarFilters(['verified']);
+        }
+
         $table
             ->query(User::query())
             ->columns([TextColumn::make('name')->searchable()])
@@ -37,6 +43,6 @@ class UsersTable extends TableWidget
                     ->query(static fn (Builder $query): Builder => $query->where('name', 'Match')),
             ]);
 
-        return $this->useToolbar ? $table->toolbarFilters(['verified']) : $table;
+        return $this->useToolbar && ! $this->toolbarFirst ? $table->toolbarFilters(['verified']) : $table;
     }
 }

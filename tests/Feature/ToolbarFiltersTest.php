@@ -18,27 +18,28 @@ it('auto-registers the table macro and boots as a panel plugin', function () {
         ->toBeInstanceOf(ToolbarFiltersPlugin::class);
 });
 
-it('renders the native field once in the toolbar with the grouping selector', function () {
-    $component = Livewire::test(UsersTable::class)->assertSee('data-toolbar-filters', escape: false);
+it('renders the native field once in the toolbar with the grouping selector', function (bool $toolbarFirst) {
+    $component = Livewire::test(UsersTable::class, ['toolbarFirst' => $toolbarFirst])
+        ->assertSee('data-toolbar-filters', escape: false);
     $html = $component->html();
     expect(substr_count($html, needle: 'role="switch"'))->toBe(1);
     expect($html)->toContain('Group by');
     expect($component->instance()->getTableFiltersForm()->toHtml())
         ->toContain('Menu match')
         ->not->toContain('Verified');
-});
+})->with(['filters first' => false, 'toolbar first' => true]);
 
 it('keeps ordinary tables unchanged when they do not opt in', function () {
     Livewire::test(UsersTable::class, ['useToolbar' => false])
         ->assertDontSee('data-toolbar-filters', escape: false);
 });
 
-it('combines querying searching and menu filters without a toolbar indicator', function () {
+it('combines querying searching and menu filters without a toolbar indicator', function (bool $toolbarFirst) {
     $match = User::create(['name' => 'Match', 'email_verified_at' => now()]);
     $other = User::create(['name' => 'Other', 'email_verified_at' => now()]);
     $unverified = User::create(['name' => 'Match']);
 
-    $component = Livewire::test(UsersTable::class)
+    $component = Livewire::test(UsersTable::class, ['toolbarFirst' => $toolbarFirst])
         ->filterTable('verified')
         ->assertCanSeeTableRecords([$match, $other])
         ->assertCanNotSeeTableRecords([$unverified])
@@ -58,7 +59,7 @@ it('combines querying searching and menu filters without a toolbar indicator', f
         ->toHaveKey('style');
 
     $component->call('removeTableFilters')->assertCanSeeTableRecords([$match, $other, $unverified]);
-});
+})->with(['filters first' => false, 'toolbar first' => true]);
 
 it('loads the native URL state and resets the lifted field', function () {
     $verified = User::create(['name' => 'Verified', 'email_verified_at' => now()]);
@@ -100,7 +101,9 @@ it('hides the empty menu when all filters are lifted', function () {
 it('reports unknown filter names instead of silently ignoring them', function () {
     $table = Livewire::test(UsersTable::class)->instance()->getTable();
 
-    expect(fn () => $table->toolbarFilters(['missing']))
+    $table->toolbarFilters(['missing']);
+
+    expect($table->getFiltersFormSchema(...))
         ->toThrow(InvalidArgumentException::class, 'Unknown toolbar filter [missing]');
 });
 

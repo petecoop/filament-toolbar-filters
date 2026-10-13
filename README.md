@@ -25,7 +25,7 @@ public function panel(Panel $panel): Panel
 
 ## Usage
 
-Define your filters normally, then choose which ones to lift using `toolbarFilters`:
+Define your filters normally and choose which ones to display in the toolbar using `toolbarFilters`.
 
 ```php
 use Filament\Tables\Filters\Filter;
@@ -63,3 +63,8 @@ Use a hook inside the table toolbar.
 
 - The macro sets **all** table filters to apply immediately (`deferFilters(false)`).
   A deferred menu combined with immediate toolbar filters is not supported.
+- The macro uses `filtersFormSchema()` and `filtersTriggerAction()` internally.
+  Custom callbacks for these methods are not currently supported: callbacks set
+  before `toolbarFilters()` are replaced, and callbacks set afterwards replace
+  the plugin's callbacks. This can break toolbar rendering and indicator
+  suppression, or leave an empty filter menu trigger visible.
