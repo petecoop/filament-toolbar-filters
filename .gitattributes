@@ -7,3 +7,4 @@ mago.toml export-ignore
 .release-it.json export-ignore
 /tests export-ignore
 phpunit.xml export-ignore
+.prettierrc export-ignore
